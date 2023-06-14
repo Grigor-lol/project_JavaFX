@@ -17,7 +17,6 @@ public class CSVReaderSaver {
         ArrayList<TaskClass> res = new ArrayList<>();
         Scanner sc;
         Boolean isDone;
-        Boolean inDev;
         try {
             sc = new Scanner(new File("tasks.csv"));
         } catch (FileNotFoundException e) {
@@ -29,7 +28,7 @@ public class CSVReaderSaver {
         while (sc.hasNext())  //returns a boolean value
         {
             String[] curArr = sc.next().split(",");
-            if (curArr.length != 8) {
+            if (curArr.length != 7) {
                 continue;
             }
 
@@ -38,15 +37,11 @@ public class CSVReaderSaver {
             }
             else isDone = false;
 
-            if (Integer.parseInt(curArr[7].strip()) == 1) {
-                inDev = true;
-            }
-            else inDev = false;
 
             System.out.print(Integer.parseInt(curArr[5].strip()) == 1);
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            LocalDate date = LocalDate.parse(curArr[3].strip(), formatter);
-            res.add(new TaskClass(curArr[0].strip(), curArr[1].strip(), curArr[2].strip(), date, curArr[4].strip(), isDone, curArr[6].strip(), inDev));
+            LocalDate date = LocalDate.parse(curArr[1].strip(), formatter);
+            res.add(new TaskClass(curArr[0].strip(), curArr[3].strip(), curArr[2].strip(), date, curArr[4].strip(), isDone, curArr[6].strip()));
         }
         System.out.print("CSV reading done!\n");
         System.out.print(res);
@@ -55,15 +50,12 @@ public class CSVReaderSaver {
     }
     public static String convertToCSV(TaskClass tc) {
         int isDone = 0;
-        int inDev = 0;
+
         if (tc.isDone()) {
             isDone = 1;
         }
 
-        if(tc.inDevelop()){
-            inDev = 1;
-        }
-        return tc.getTask() + ", " + tc.getDescription() + ", " + tc.getExecutor() + ", " + tc.getDeadline() + ", " + tc.getStatus()+ ", " + isDone+ ", " + tc.getComment()+", " + inDev + "!";
+        return tc.getEvent2() + ", " + tc.getTime() + ", " + tc.getPlace() + ", " + tc.getDescription() + ", " + tc.getStatus()+ ", " + isDone+ ", " + tc.getComment() + "!";
     }
     public static void saveCSV(ArrayList<TaskClass> saveListOfLinks) {
         File csvOutputFile = new File("tasks.csv");

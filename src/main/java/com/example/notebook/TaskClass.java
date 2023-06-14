@@ -4,31 +4,30 @@ import java.time.LocalDate;
 
 public class TaskClass {
 
-    private final String task;
+    private final String event2;
     private final String description;
-    private final String executor;
-    private LocalDate deadline;
+    private final String place;
+    private LocalDate time;
 
     private String status;
     private Boolean isDone;
-    private Boolean inDevelop;
     private String comment;
 
 
 
-    public String getTask() {
-        return task;
+    public String getEvent2() {
+        return event2;
     }
 
     public String getDescription() {
         return description;
     }
-    public String getExecutor() {
-        return executor;
+    public LocalDate getTime() {
+        return time;
     }
 
-    public LocalDate getDeadline() {
-        return deadline;
+    public String getPlace() {
+        return place;
     }
 
     public String getStatus() {
@@ -42,25 +41,13 @@ public class TaskClass {
     public Boolean isDone() {
         return isDone;
     }
-    public Boolean inDevelop() {
-        return inDevelop;
-    }
-
 
     public void setDone() {
         this.isDone = true;
     }
 
-    public void setNotInDevelope() {
-        this.inDevelop = false;
-    }
-
     public void setNotDone() {
         this.isDone = false;
-    }
-
-    public void addWeek() {
-       this.deadline = this.deadline.plusWeeks(1);
     }
 
     public void setStatus(String status) {
@@ -70,14 +57,13 @@ public class TaskClass {
         this.comment = comment;
     }
 
-    public TaskClass(String task, String description, String executor, LocalDate deadline, String status, Boolean isDone, String comment, Boolean inDevelop) {
-        this.task = task;
+    public TaskClass(String event2, String description, String place, LocalDate time, String status, Boolean isDone, String comment) {
+        this.event2 = event2;
         this.description = description;
-        this.executor = executor;
-        this.deadline = deadline;
+        this.time = time;
+        this.place = place;
         this.status = status;
         this.isDone = isDone;
         this.comment = comment;
-        this.inDevelop = inDevelop;
     }
 }

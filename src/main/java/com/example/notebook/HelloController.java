@@ -10,6 +10,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
+import java.io.Console;
 import java.io.FileNotFoundException;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -25,10 +26,6 @@ import static com.example.notebook.CSVReaderSaver.readCSV;
 import static com.example.notebook.CSVReaderSaver.saveCSV;
 
 public class HelloController {
-
-
-    private Map<String, CustomMenuItem> curMapOfMenuItems;
-    private Map<String, CheckBox> curMapOfCheckBoxes;
     ArrayList<TaskClass> actualList;
     ObservableList<TaskClass> taskList;
     @FXML
@@ -39,31 +36,29 @@ public class HelloController {
 
 
     @FXML
-    private TextArea taskTextField;
+    private TextArea eventTextField;
     @FXML
     private MenuButton menuButton;
 
     @FXML
-    private DatePicker deadlineTextField;
+    private DatePicker dateTextField;
 
     @FXML
-    private TextArea executorTextField;
+    private TextArea placeTextField;
     @FXML
     private TextArea descriptionTextField;
     @FXML
     private TextArea doneComment;
-    @FXML
-    private TextArea notDoneComment;
 
 
     @FXML
-    private TableColumn task;
+    private TableColumn event2;
     @FXML
     private TableColumn description;
     @FXML
-    private TableColumn executor;
+    private TableColumn time;
     @FXML
-    private TableColumn deadline;
+    private TableColumn place;
     @FXML
     private TableColumn status;
     @FXML
@@ -78,27 +73,27 @@ public class HelloController {
         taskList = FXCollections.observableArrayList(actualList);
         main_table.setItems(taskList);
 
-        deadlineTextField.setEditable(false);
+        dateTextField.setEditable(false);
         doneComment.setWrapText(true);
-        notDoneComment.setWrapText(true);
 
 
 
-        task.setCellValueFactory(new PropertyValueFactory<>("task"));
+
+        event2.setCellValueFactory(new PropertyValueFactory<>("event2"));
 
         description.setCellValueFactory(new PropertyValueFactory<>("description"));
 
-        executor.setCellValueFactory(new PropertyValueFactory<>("executor"));
+        time.setCellValueFactory(new PropertyValueFactory<>("time"));
 
-        deadline.setCellValueFactory(new PropertyValueFactory<>("deadline"));
+        place.setCellValueFactory(new PropertyValueFactory<>("place"));
         status.setCellValueFactory(new PropertyValueFactory<>("status"));
         comment.setCellValueFactory(new PropertyValueFactory<>("comment"));
 
 
-        task.prefWidthProperty().bind(main_table.widthProperty().multiply(0.25));
+        event2.prefWidthProperty().bind(main_table.widthProperty().multiply(0.25));
         description.prefWidthProperty().bind(main_table.widthProperty().multiply(0.25));
-        executor.prefWidthProperty().bind(main_table.widthProperty().multiply(0.1));
-        deadline.prefWidthProperty().bind(main_table.widthProperty().multiply(0.1));
+        time.prefWidthProperty().bind(main_table.widthProperty().multiply(0.1));
+        place.prefWidthProperty().bind(main_table.widthProperty().multiply(0.1));
         status.prefWidthProperty().bind(main_table.widthProperty().multiply(0.1));
         comment.prefWidthProperty().bind(main_table.widthProperty().multiply(0.2));
 
@@ -111,10 +106,10 @@ public class HelloController {
     @FXML
     protected void on_click_add_button() {
         ArrayList<String> missingFields = CheckMissingFields();
-        if (missingFields.contains("Deadline")){
+        if (missingFields.contains("Date")){
             Alert errorAlert = new Alert(Alert.AlertType.ERROR);
-            errorAlert.setHeaderText("Not correct format for data");
-            errorAlert.setContentText("Not correct format for deadline data");
+            errorAlert.setHeaderText("Not correct format for date");
+            errorAlert.setContentText("Not correct format for date");
             errorAlert.showAndWait();
             return;
         }
@@ -126,16 +121,16 @@ public class HelloController {
             errorAlert.showAndWait();
             return;
         }
-
-        TaskClass task = new TaskClass(taskTextField.getText(), descriptionTextField.getText(), executorTextField.getText(), deadlineTextField.getValue(), "In developing", false, "", true);
+        System.out.println(eventTextField.getText());
+        TaskClass task = new TaskClass(eventTextField.getText(), descriptionTextField.getText(), placeTextField.getText(), dateTextField.getValue(), "Not visited", false, "");
 
         taskList.add(task);
         actualList.add(task);
         main_table.setItems(taskList);
 
-        taskTextField.clear();
+        eventTextField.clear();
         descriptionTextField.clear();
-        executorTextField.clear();
+        placeTextField.clear();
         //deadlineTextField.clear();
 
 
@@ -143,17 +138,17 @@ public class HelloController {
 
     protected ArrayList<String> CheckMissingFields() {
         ArrayList<String> missingFields = new ArrayList<>();
-        if (taskTextField.getText().isEmpty()) {
-            missingFields.add("Task");
+        if (eventTextField.getText().isEmpty()) {
+            missingFields.add("Event");
         }
         if (descriptionTextField.getText().isEmpty()) {
             missingFields.add("Description");
         }
-        if (executorTextField.getText().isEmpty()) {
-            missingFields.add("Executor");
+        if (placeTextField.getText().isEmpty()) {
+            missingFields.add("Place");
         }
-        if(deadlineTextField.getValue() == null) {
-            missingFields.add("Deadline");
+        if(dateTextField.getValue() == null) {
+            missingFields.add("Date");
         }
         return missingFields;
     }
@@ -177,32 +172,23 @@ public class HelloController {
 
     @FXML
     protected void on_click_done_button() {
-        String status = "Done";
+        String status = "Visited";
         TaskClass selectedItem = main_table.getSelectionModel().getSelectedItem();
         if (selectedItem == null) {
-            System.out.print("lol");
             return;
         }
 
         if (selectedItem.isDone()) {
-            System.out.print("lol2");
             return;
         }
 
 
         if (doneComment.getText() != "") {
-            //status += doneComment.getText();
             selectedItem.setComment(doneComment.getText());
         }
 
-        if (!selectedItem.inDevelop()) {
-            System.out.print(selectedItem.getStatus());
-
-            return;
-        }
 
         selectedItem.setDone();
-        selectedItem.setNotInDevelope();
         selectedItem.setStatus(status);
 
         doneComment.clear();
@@ -211,36 +197,6 @@ public class HelloController {
 
     }
 
-    @FXML
-    protected void on_click_not_done_button() {
-        String status = "Not done";
-        TaskClass selectedItem = main_table.getSelectionModel().getSelectedItem();
-        //System.out.print("lol3");
-        if (selectedItem == null) {
-            //System.out.print("lol");
-            return;
-        }
-
-        if (selectedItem.inDevelop()) {
-            //System.out.print("lol2");
-            TaskClass newItem = new TaskClass(selectedItem.getTask(),selectedItem.getDescription(),selectedItem.getExecutor(),selectedItem.getDeadline(),"In developing",false, "", true);
-            newItem.addWeek();
-
-            selectedItem.setNotDone();
-            if (notDoneComment.getText() != "") {
-                //status += notDoneComment.getText();
-                selectedItem.setComment(notDoneComment.getText());
-            }
-            selectedItem.setStatus(status);
-            selectedItem.setNotInDevelope();
-
-            taskList.add(newItem);
-            actualList.add(newItem);
-
-            notDoneComment.clear();
-            main_table.refresh();
-        }
-    }
 
     @FXML
     protected void onClose() {
